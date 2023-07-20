@@ -2,6 +2,7 @@
 using Microsoft.MixedReality.WebRTC;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 public class RTCServer : MonoBehaviour
 {
@@ -88,34 +89,42 @@ public class RTCServer : MonoBehaviour
         {
             // For example, print them to the standard output
 
-            var deviceSettings = new LocalVideoDeviceInitConfig
+            try
             {
-                width = VideoWidth,
-                height = VideoHeight,
-            };
-            if (VideoFps > 0)
-            {
-                deviceSettings.framerate = VideoFps;
+                var deviceSettings = new LocalVideoDeviceInitConfig
+                {
+                    width = VideoWidth,
+                    height = VideoHeight,
+                };
+                if (VideoFps > 0)
+                {
+                    deviceSettings.framerate = VideoFps;
+                }
+                if (VideoProfileId.Length > 0)
+                {
+                    deviceSettings.videoProfileId = VideoProfileId;
+                }
+
+                Debug.Log($"Attempt to grab Camera - {deviceSettings.videoProfileId}: {deviceSettings.width}x{deviceSettings.height}@{deviceSettings.framerate}fps");
+                videoTrackSource = await DeviceVideoTrackSource.CreateAsync(deviceSettings);
+
+                Debug.Log($"Create local video track... {videoTrackSource}");
+                var trackSettings = new LocalVideoTrackInitConfig
+                {
+                    trackName = "webcam_track"
+                };
+                localVideoTrack = LocalVideoTrack.CreateFromSource(videoTrackSource, trackSettings);
+
+                Debug.Log("Create video transceiver and add webcam track...");
+                videoTransceiver = pc.AddTransceiver(MediaKind.Video);
+                videoTransceiver.DesiredDirection = Transceiver.Direction.SendReceive;
+                videoTransceiver.LocalVideoTrack = localVideoTrack;
+
             }
-            if (VideoProfileId.Length > 0)
+            catch(Exception e)
             {
-                deviceSettings.videoProfileId = VideoProfileId;
+                Debug.LogError("Exception found" + e.Message);
             }
-
-            Debug.Log($"Attempt to grab Camera - {deviceSettings.videoProfileId}: {deviceSettings.width}x{deviceSettings.height}@{deviceSettings.framerate}fps");
-            videoTrackSource = await DeviceVideoTrackSource.CreateAsync(deviceSettings);
-
-            Debug.Log($"Create local video track... {videoTrackSource}");
-            var trackSettings = new LocalVideoTrackInitConfig
-            {
-                trackName = "webcam_track"
-            };
-            localVideoTrack = LocalVideoTrack.CreateFromSource(videoTrackSource, trackSettings);
-
-            Debug.Log("Create video transceiver and add webcam track...");
-            videoTransceiver = pc.AddTransceiver(MediaKind.Video);
-            videoTransceiver.DesiredDirection = Transceiver.Direction.SendReceive;
-            videoTransceiver.LocalVideoTrack = localVideoTrack;
         }
 
         // Record audio from local microphone, and send to remote peer

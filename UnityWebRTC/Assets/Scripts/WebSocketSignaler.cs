@@ -70,11 +70,10 @@ public class WebSocketSignaler : Signaler
 
     public override void Start()
     {
-        _server = new WebSocketServer(IPAddress.Any, _serverPort, true);
+        _server = new WebSocketServer(IPAddress.Any, _serverPort, false);
         var path = System.IO.Path.Combine(Application.streamingAssetsPath, "Certs", "localhost.pfx.bin");
         byte[] content = UnityEngine.Windows.File.ReadAllBytes(path);
-        _server.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(content);
-        _server.SslConfiguration.CheckCertificateRevocation = false;
+//        _server.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(content);
         _server.AddWebSocketService<WebRtcSession>("/", newSession =>
         {
             Debug.Log("Incoming connection ...");

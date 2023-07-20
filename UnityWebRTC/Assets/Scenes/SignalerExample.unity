@@ -287,14 +287,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NeedVideo: 1
-  NeedAudio: 0
-  VideoWidth: 640
-  VideoHeight: 360
+  NeedAudio: 1
+  VideoWidth: 1280
+  VideoHeight: 720
   VideoFps: 30
   VideoProfileId: 
   Port: 9095
-  ConnectionType: 0
-  UseRemoteStun: 0
+  ConnectionType: 1
+  UseRemoteStun: 1
 --- !u!4 &825227016
 Transform:
   m_ObjectHideFlags: 0
