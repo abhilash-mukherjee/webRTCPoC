@@ -36,12 +36,12 @@
             }
 
             const url = document.getElementById('remoteAddress').value;
-            ws = new WebSocket(`ws://localhost:9095`, []);
+            ws = new WebSocket(`ws:\\${url}`, []);
 
             ws.onmessage = async function (evt) {
                 let obj = JSON.parse(evt.data);
                 if (obj['type'] == 'ice') {
-                    console.log("remote ice candidate: " + obj['candidate']);
+                    // console.log("remote ice candidate: " + obj['candidate']);
                     pc.addIceCandidate({ candidate: obj['candidate'], sdpMid: obj['sdpMid'], sdpMLineIndex: obj['sdpMLineIndex'] });
                 }
                 else if (obj.offer) {
